@@ -1,4 +1,4 @@
-module github.com/fhs/acme-lsp
+module github.com/ianzhang366/acme-lsp
 
 go 1.17
 
