@@ -220,6 +220,7 @@ func (w *outputWin) Update(fw *focusWin, server proxy.Server, cmd string) {
 	w.Clear()
 	switch cmd {
 	case "comp":
+
 		err := rc.Completion(ctx, false)
 		if err != nil {
 			dprintf("Completion failed: %v\n", err)
@@ -270,6 +271,7 @@ loop:
 				w.Update(fw, server, cmd)
 			}
 
+			fmt.Printf("ianzhang >>> assist.go Win Focuse, cmd: %v\n", cmd)
 		case ev := <-w.event:
 			if ev == nil {
 				break loop
@@ -281,6 +283,8 @@ loop:
 				}
 			}
 			w.WriteEvent(ev)
+
+			fmt.Printf("ianzhang >>> assist.go Win Event, cmd: %v\n", cmd)
 		}
 	}
 	return nil

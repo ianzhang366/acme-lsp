@@ -681,6 +681,8 @@ func (s *serverDispatcher) Resolve(ctx context.Context, params *CompletionItem) 
 
 func (s *serverDispatcher) Hover(ctx context.Context, params *HoverParams) (*Hover, error) {
 	var result Hover
+
+	fmt.Printf("ian.zhang >>>>> serverDispatcher.Hover: paras:\n%#v\n", &params)
 	if err := s.Conn.Call(ctx, "textDocument/hover", params, &result); err != nil {
 		return nil, err
 	}
@@ -689,6 +691,7 @@ func (s *serverDispatcher) Hover(ctx context.Context, params *HoverParams) (*Hov
 
 func (s *serverDispatcher) SignatureHelp(ctx context.Context, params *SignatureHelpParams) (*SignatureHelp, error) {
 	var result SignatureHelp
+	fmt.Printf("ianzhang >>>> tsserver.serverDispatcher.SignatureHelp:\n%#v\n", &params)
 	if err := s.Conn.Call(ctx, "textDocument/signatureHelp", params, &result); err != nil {
 		return nil, err
 	}

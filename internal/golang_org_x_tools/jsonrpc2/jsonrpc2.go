@@ -139,6 +139,8 @@ func (c *Conn) Call(ctx context.Context, method string, params, result interface
 		Method: method,
 		Params: jsonParams,
 	}
+
+	fmt.Printf("ianzhang >>> Conn.Call request:\n%#v\n", request)
 	// marshal the request now it is complete
 	data, err := json.Marshal(request)
 	if err != nil {
@@ -177,6 +179,8 @@ func (c *Conn) Call(ctx context.Context, method string, params, result interface
 		for _, h := range c.handlers {
 			ctx = h.Response(ctx, c, Receive, response)
 		}
+
+		fmt.Printf("ianzhang >>> response:\n%#v\n", response)
 		// is it an error response?
 		if response.Error != nil {
 			return response.Error
