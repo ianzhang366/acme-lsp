@@ -5,6 +5,7 @@ package protocol
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/fhs/acme-lsp/internal/golang_org_x_tools/jsonrpc2"
 	"github.com/fhs/acme-lsp/internal/golang_org_x_tools/telemetry/log"
@@ -659,11 +660,15 @@ func (s *serverDispatcher) WillSaveWaitUntil(ctx context.Context, params *WillSa
 }
 
 func (s *serverDispatcher) Completion(ctx context.Context, params *CompletionParams) (*CompletionList, error) {
-	var result CompletionList
-	if err := s.Conn.Call(ctx, "textDocument/completion", params, &result); err != nil {
+	//var result CompletionList
+
+	var items []CompletionItem
+
+	fmt.Printf("ianzhang >>>> serverDispatcher.Completion:\n%#v\n", params)
+	if err := s.Conn.Call(ctx, "textDocument/completion", params, &items); err != nil {
 		return nil, err
 	}
-	return &result, nil
+	return &CompletionList{Items:items}, nil
 }
 
 func (s *serverDispatcher) Resolve(ctx context.Context, params *CompletionItem) (*CompletionItem, error) {
