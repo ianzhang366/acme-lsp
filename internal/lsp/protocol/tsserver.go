@@ -662,13 +662,16 @@ func (s *serverDispatcher) WillSaveWaitUntil(ctx context.Context, params *WillSa
 func (s *serverDispatcher) Completion(ctx context.Context, params *CompletionParams) (*CompletionList, error) {
 	//var result CompletionList
 
-	var items []CompletionItem
+	var items compList
+	// var items []CompletionItem
 
 	fmt.Printf("ianzhang >>>> serverDispatcher.Completion:\n%#v\n", params)
 	if err := s.Conn.Call(ctx, "textDocument/completion", params, &items); err != nil {
 		return nil, err
 	}
-	return &CompletionList{Items:items}, nil
+
+	res := CompletionList(items)
+	return &res, nil
 }
 
 func (s *serverDispatcher) Resolve(ctx context.Context, params *CompletionItem) (*CompletionItem, error) {
