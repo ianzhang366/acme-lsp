@@ -15,21 +15,9 @@ git clone $REPO
     git checkout $COMMIT
 )
 
-mv tools/internal/lsp/protocol/LICENSE lsp/protocol/LICENSE
-mv tools/internal/lsp/protocol/context.go lsp/protocol/context.go
-mv tools/internal/lsp/protocol/doc.go lsp/protocol/doc.go
-mv tools/internal/lsp/protocol/enums.go lsp/protocol/enums.go
-mv tools/internal/lsp/protocol/log.go lsp/protocol/log.go
-mv tools/internal/lsp/protocol/protocol.go lsp/protocol/protocol.go
-mv tools/internal/lsp/protocol/span.go lsp/protocol/span.go
-mv tools/internal/lsp/protocol/tsclient.go lsp/protocol/tsclient.go
-mv tools/internal/lsp/protocol/tsprotocol.go lsp/protocol/tsprotocol.go
-mv tools/internal/lsp/protocol/tsserver.go lsp/protocol/tsserver.go
-
 mkdir $DIR
 mv tools/LICENSE $DIR/LICENSE
 mv tools/internal/jsonrpc2 $DIR/jsonrpc2
-mv tools/internal/jsonrpc2_v2 $DIR/jsonrpc2_v2
 mv tools/internal/span $DIR/span
 mv tools/internal/telemetry $DIR/telemetry
 mv tools/internal/xcontext $DIR/xcontext
