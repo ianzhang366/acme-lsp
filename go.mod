@@ -8,5 +8,3 @@ require (
 	github.com/google/go-cmp v0.3.0
 	golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543
 )
-
-replace github.com/fhs/acme-lsp

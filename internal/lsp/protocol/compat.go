@@ -101,7 +101,7 @@ func (ls *Locations) UnmarshalJSON(data []byte) error {
 type compList CompletionList
 
 func (c *compList) UnmarshalJSON(data []byte) error {
-	fmt.Printf("ianzhang >>>> input json:\n%#v\n", string(data))
+	fmt.Printf("ianzhang >>>> input json:\n%#v\n", string(data[:100]))
 	d := strings.TrimSpace(string(data))
 	if len(d) == 0 && strings.EqualFold(d, "null") {
 		return nil
@@ -115,12 +115,16 @@ func (c *compList) UnmarshalJSON(data []byte) error {
 		}
 
 		c.Items = items
-
 	} else {
-		err := json.Unmarshal(data, *c)
+		fmt.Printf("ianzhang >>>> input json full list, %#v\n", c)
+
+		var tmp CompletionList
+		err := json.Unmarshal(data, &tmp)
 		if err != nil {
 			return err
 		}
+
+		*c = compList(tmp)
 	}
 
 	return nil
