@@ -271,7 +271,6 @@ loop:
 				w.Update(fw, server, cmd)
 			}
 
-			fmt.Printf("ianzhang >>> assist.go Win Focuse, cmd: %v\n", cmd)
 		case ev := <-w.event:
 			if ev == nil {
 				break loop
@@ -284,7 +283,6 @@ loop:
 			}
 			w.WriteEvent(ev)
 
-			fmt.Printf("ianzhang >>> assist.go Win Event, cmd: %v\n", cmd)
 		}
 	}
 	return nil

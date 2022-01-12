@@ -2,7 +2,6 @@ package protocol
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 )
 
@@ -101,12 +100,6 @@ func (ls *Locations) UnmarshalJSON(data []byte) error {
 type compList CompletionList
 
 func (c *compList) UnmarshalJSON(data []byte) error {
-	if len(data) > 10{
-		fmt.Printf("ianzhang >>>> input json:\n%#v\n", string(data[:10]))
-	}else{
-	fmt.Printf("ianzhang >>>> input json:\n%#v\n", string(data ))
-	}
-
 	d := strings.TrimSpace(string(data))
 	if len(d) == 0 && strings.EqualFold(d, "null") {
 		return nil
@@ -121,7 +114,6 @@ func (c *compList) UnmarshalJSON(data []byte) error {
 
 		c.Items = items
 	} else {
-		fmt.Printf("ianzhang >>>> input json full list, %#v\n", c)
 
 		var tmp CompletionList
 		err := json.Unmarshal(data, &tmp)

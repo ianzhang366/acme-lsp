@@ -665,7 +665,7 @@ func (s *serverDispatcher) Completion(ctx context.Context, params *CompletionPar
 	var items compList
 	// var items []CompletionItem
 
-	fmt.Printf("ianzhang >>>> serverDispatcher.Completion:\n%#v\n", params)
+
 	if err := s.Conn.Call(ctx, "textDocument/completion", params, &items); err != nil {
 		return nil, err
 	}
@@ -694,7 +694,7 @@ func (s *serverDispatcher) Hover(ctx context.Context, params *HoverParams) (*Hov
 
 func (s *serverDispatcher) SignatureHelp(ctx context.Context, params *SignatureHelpParams) (*SignatureHelp, error) {
 	var result SignatureHelp
-	fmt.Printf("ianzhang >>>> tsserver.serverDispatcher.SignatureHelp:\n%#v\n", &params)
+
 	if err := s.Conn.Call(ctx, "textDocument/signatureHelp", params, &result); err != nil {
 		return nil, err
 	}
@@ -714,6 +714,7 @@ func (s *serverDispatcher) References(ctx context.Context, params *ReferencePara
 	if err := s.Conn.Call(ctx, "textDocument/references", params, &result); err != nil {
 		return nil, err
 	}
+
 	return result, nil
 }
 
