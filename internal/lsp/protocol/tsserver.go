@@ -685,7 +685,6 @@ func (s *serverDispatcher) Resolve(ctx context.Context, params *CompletionItem) 
 func (s *serverDispatcher) Hover(ctx context.Context, params *HoverParams) (*Hover, error) {
 	var result Hover
 
-	fmt.Printf("ian.zhang >>>>> serverDispatcher.Hover: paras:\n%#v\n", &params)
 	if err := s.Conn.Call(ctx, "textDocument/hover", params, &result); err != nil {
 		return nil, err
 	}
