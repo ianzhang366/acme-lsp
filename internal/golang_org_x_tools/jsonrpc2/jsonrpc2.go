@@ -11,6 +11,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"sync"
 	"sync/atomic"
 )
@@ -139,6 +140,8 @@ func (c *Conn) Call(ctx context.Context, method string, params, result interface
 		Method: method,
 		Params: jsonParams,
 	}
+
+	log.Printf("ianzhang Call, method: %#v", method)
 
 	// marshal the request now it is complete
 	data, err := json.Marshal(request)
