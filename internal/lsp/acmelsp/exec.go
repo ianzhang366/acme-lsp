@@ -24,7 +24,6 @@ type Server struct {
 	conn net.Conn
 
 	Client *Client
-	Log    *log.Logger
 }
 
 func (s *Server) Close() {
@@ -249,7 +248,6 @@ func (ss *ServerSet) StartForFile(filename string) (*Server, bool, error) {
 	}
 
 	srv.Name = info.Name
-	srv.Log = info.Logger
 
 	return srv, true, err
 }
