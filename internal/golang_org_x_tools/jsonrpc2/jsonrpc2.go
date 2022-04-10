@@ -11,7 +11,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"sync"
 	"sync/atomic"
 )
@@ -27,7 +26,6 @@ type Conn struct {
 	pending    map[ID]chan *WireResponse
 	handlingMu sync.Mutex // protects the handling map
 	handling   map[ID]*Request
-	logger     *log.Logger
 }
 
 type requestState int
@@ -62,13 +60,12 @@ func NewErrorf(code int64, format string, args ...interface{}) *Error {
 
 // NewConn creates a new connection object around the supplied stream.
 // You must call Run for the connection to be active.
-func NewConn(s Stream, logger *log.Logger) *Conn {
+func NewConn(s Stream) *Conn {
 	conn := &Conn{
 		handlers: []Handler{defaultHandler{}},
 		stream:   s,
 		pending:  make(map[ID]chan *WireResponse),
 		handling: make(map[ID]*Request),
-		logger:   logger,
 	}
 	return conn
 }
@@ -152,7 +149,6 @@ func (c *Conn) Call(ctx context.Context, method string, params, result interface
 		ctx = h.Request(ctx, c, Send, request)
 	}
 
-	c.logger.Printf("calling method: %v, request: %v", method, string(data))
 	// we have to add ourselves to the pending map before we send, otherwise we
 	// are racing the response
 	rchan := make(chan *WireResponse)
@@ -186,7 +182,7 @@ func (c *Conn) Call(ctx context.Context, method string, params, result interface
 
 		// is it an error response?
 		if response.Error != nil {
-			return fmt.Errorf("response error: %v", response.Error)
+			return response.Error
 		}
 		if result == nil || response.Result == nil {
 			return nil

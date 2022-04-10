@@ -145,7 +145,6 @@ func (h clientHandler) Deliver(ctx context.Context, r *jsonrpc2.Request, deliver
 
 type clientDispatcher struct {
 	*jsonrpc2.Conn
-	Log *log.Logger
 }
 
 func (s *clientDispatcher) ShowMessage(ctx context.Context, params *ShowMessageParams) error {

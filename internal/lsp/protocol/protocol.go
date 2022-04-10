@@ -63,15 +63,15 @@ func (canceller) Cancel(ctx context.Context, conn *jsonrpc2.Conn, id jsonrpc2.ID
 
 func NewClient(ctx context.Context, stream jsonrpc2.Stream, client Client, logger *log.Logger) (context.Context, *jsonrpc2.Conn, Server) {
 	ctx = WithClient(ctx, client)
-	conn := jsonrpc2.NewConn(stream, logger)
+	conn := jsonrpc2.NewConn(stream)
 	conn.AddHandler(&clientHandler{client: client, Logger: logger})
 	return ctx, conn, &serverDispatcher{Conn: conn, Logger: logger}
 }
 
 func NewServer(ctx context.Context, stream jsonrpc2.Stream, server Server, logger *log.Logger) (context.Context, *jsonrpc2.Conn, Client) {
 	logger.Print("protocol.go NewServer")
-	conn := jsonrpc2.NewConn(stream, logger)
-	client := &clientDispatcher{Conn: conn, Log: logger}
+	conn := jsonrpc2.NewConn(stream)
+	client := &clientDispatcher{Conn: conn}
 	ctx = WithClient(ctx, client)
 	conn.AddHandler(&serverHandler{server: server, Logger: logger})
 	return ctx, conn, client
