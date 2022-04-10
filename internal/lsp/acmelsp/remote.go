@@ -150,6 +150,7 @@ func (rc *RemoteCmd) Definition(ctx context.Context, print bool) error {
 	if strings.HasSuffix(uri, sufix) {
 		for i, loc := range locations {
 			rc.Log.Printf("defintion checking location: %#v", loc)
+
 			if !strings.HasPrefix(loc.URI, "file:///%24metadata%24") {
 				continue
 			}
@@ -160,6 +161,7 @@ func (rc *RemoteCmd) Definition(ctx context.Context, print bool) error {
 			}
 
 			locations[i].URI = protocol.DocumentURI(path)
+
 		}
 	}
 
@@ -207,8 +209,8 @@ func (rc *RemoteCmd) localizeMetadata(ctx context.Context, uri string) (string, 
 	}
 
 	rc.metadataSet[key] = path
-
 	return path, nil
+
 }
 
 func convertFilePath(p string) (path string) {
@@ -217,7 +219,7 @@ func convertFilePath(p string) (path string) {
 	return
 }
 
-func GetMetaParas(s string) (*protocol.MetadataParams, bool) {
+func GetMetaParas(s string) (*protocol.MetadataParams, bool) { //
 	out := &protocol.MetadataParams{TimeOut: 5000}
 	parts := strings.Split(s, "/Assembly/")
 
@@ -244,6 +246,7 @@ func GetMetaParas(s string) (*protocol.MetadataParams, bool) {
 	out.TypeName = typeName
 
 	return out, true
+
 }
 
 func (rc *RemoteCmd) OrganizeImportsAndFormat(ctx context.Context) error {

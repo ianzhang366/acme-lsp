@@ -65,7 +65,7 @@ func (s *proxyServer) Definition(ctx context.Context, params *protocol.Definitio
 	return srv.Client.Definition(ctx, params)
 }
 
-func (s *proxyServer) Metadata(ctx context.Context, params *protocol.MetadataParams) (*protocol.MetaSource, error) {
+func (s *proxyServer) Metadata(ctx context.Context, params *protocol.MetadataParams) (*protocol.MetaSourceRsponse, error) {
 	srv, err := serverForURI(s.ss, "csharp.cs")
 	s.Log.Printf("call to lsp server: %v Call Metadata", srv.Name)
 	conn := srv.Conn()

@@ -49,7 +49,7 @@ type Server interface {
 	SignatureHelp(context.Context, *protocol.SignatureHelpParams) (*protocol.SignatureHelp, error)
 	DocumentSymbol(context.Context, *protocol.DocumentSymbolParams) ([]protocol.DocumentSymbol, error)
 	TypeDefinition(context.Context, *protocol.TypeDefinitionParams) ([]protocol.Location, error)
-	Metadata(context.Context, *protocol.MetadataParams) (*protocol.MetaSource, error)
+	Metadata(context.Context, *protocol.MetadataParams) (*protocol.MetaSourceRsponse, error)
 }
 
 func (h serverHandler) Deliver(ctx context.Context, r *jsonrpc2.Request, delivered bool) bool {
@@ -180,7 +180,7 @@ func (s *lspServerDispatcher) Initialized(context.Context, *protocol.Initialized
 	return fmt.Errorf("not implemented")
 }
 
-func (s *lspServerDispatcher) Metadata(context.Context, *protocol.MetadataParams) (*protocol.MetaSource, error) {
+func (s *lspServerDispatcher) Metadata(context.Context, *protocol.MetadataParams) (*protocol.MetaSourceRsponse, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 

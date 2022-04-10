@@ -54,7 +54,7 @@ type Server interface {
 	Rename(context.Context, *RenameParams) (*WorkspaceEdit, error)
 	PrepareRename(context.Context, *PrepareRenameParams) (*Range, error)
 	ExecuteCommand(context.Context, *ExecuteCommandParams) (interface{}, error)
-	Metadata(context.Context, *MetadataParams) (*MetaSource, error)
+	Metadata(context.Context, *MetadataParams) (*MetaSourceRsponse, error)
 }
 
 func (h serverHandler) Deliver(ctx context.Context, r *jsonrpc2.Request, delivered bool) bool {
@@ -722,8 +722,8 @@ func (s *serverDispatcher) Definition(ctx context.Context, params *DefinitionPar
 	return result, nil
 }
 
-func (s *serverDispatcher) Metadata(ctx context.Context, params *MetadataParams) (*MetaSource, error) {
-	var result MetaSource
+func (s *serverDispatcher) Metadata(ctx context.Context, params *MetadataParams) (*MetaSourceRsponse, error) {
+	var result MetaSourceRsponse
 	s.Logger.Print("serverDispatcher csharp/metadata")
 	if err := s.Conn.Call(ctx, MetadataEndpoint, params, &result); err != nil {
 		s.Logger.Printf("/protocol/tsserver.go csharp/metadata params: %v. result: %v, err: %v", params, result, err)

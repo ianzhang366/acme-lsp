@@ -19,6 +19,7 @@ const (
 	// RequestCancelledError should be used when a request is cancelled early.
 	RequestCancelledError = -32800
 	MetadataEndpoint      = "o#/metadata"
+	// MetadataEndpoint = "csharp/metadata"
 )
 
 type DocumentUri = string
