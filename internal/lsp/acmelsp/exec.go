@@ -37,7 +37,7 @@ func (s *Server) Conn() net.Conn {
 	return s.conn
 }
 
-func execServer(cs *config.Server, cfg *ClientConfig, logger *log.Logger) (*Server, error) {
+func execServer(cs *config.Server, cfg *ClientConfig) (*Server, error) {
 	args := cs.Command
 
 	stderr := os.Stderr
@@ -107,7 +107,7 @@ func execServer(cs *config.Server, cfg *ClientConfig, logger *log.Logger) (*Serv
 	return srv, nil
 }
 
-func dialServer(cs *config.Server, cfg *ClientConfig, logger *log.Logger) (*Server, error) {
+func dialServer(cs *config.Server, cfg *ClientConfig) (*Server, error) {
 	conn, err := net.Dial("tcp", cs.Address)
 	if err != nil {
 		return nil, err
@@ -132,19 +132,19 @@ type ServerInfo struct {
 	srv    *Server        // running server instance
 }
 
-func (info *ServerInfo) start(cfg *ClientConfig, logger *log.Logger) (*Server, error) {
+func (info *ServerInfo) start(cfg *ClientConfig) (*Server, error) {
 	if info.srv != nil {
 		return info.srv, nil
 	}
 
 	if len(info.Address) > 0 {
-		srv, err := dialServer(info.Server, cfg, logger)
+		srv, err := dialServer(info.Server, cfg)
 		if err != nil {
 			return nil, err
 		}
 		info.srv = srv
 	} else {
-		srv, err := execServer(info.Server, cfg, logger)
+		srv, err := execServer(info.Server, cfg)
 		if err != nil {
 			return nil, err
 		}
@@ -160,11 +160,10 @@ type ServerSet struct {
 	diagWriter DiagnosticsWriter
 	workspaces map[protocol.DocumentURI]*protocol.WorkspaceFolder // set of workspace folders
 	cfg        *config.Config
-	Logger     *log.Logger
 }
 
 // NewServerSet creates a new server set from config.
-func NewServerSet(cfg *config.Config, diagWriter DiagnosticsWriter, inLogger *log.Logger) (*ServerSet, error) {
+func NewServerSet(cfg *config.Config, diagWriter DiagnosticsWriter) (*ServerSet, error) {
 	workspaces := make(map[protocol.DocumentURI]*protocol.WorkspaceFolder)
 	if len(cfg.WorkspaceDirectories) > 0 {
 		folders, err := lsp.DirsToWorkspaceFolders(cfg.WorkspaceDirectories)
@@ -206,7 +205,7 @@ func NewServerSet(cfg *config.Config, diagWriter DiagnosticsWriter, inLogger *lo
 			Logger:          logger,
 		})
 
-		inLogger.Printf("Add %#v server to serverSet  ", cs)
+		log.Printf("Add %#v server to serverSet  ", cs)
 	}
 
 	return &ServerSet{
@@ -214,7 +213,6 @@ func NewServerSet(cfg *config.Config, diagWriter DiagnosticsWriter, inLogger *lo
 		diagWriter: diagWriter,
 		workspaces: workspaces,
 		cfg:        cfg,
-		Logger:     inLogger,
 	}, nil
 }
 
@@ -245,7 +243,7 @@ func (ss *ServerSet) StartForFile(filename string) (*Server, bool, error) {
 	if info == nil {
 		return nil, false, nil // unknown language server
 	}
-	srv, err := info.start(ss.ClientConfig(info), ss.Logger)
+	srv, err := info.start(ss.ClientConfig(info))
 	if err != nil {
 		return nil, false, err
 	}
@@ -282,7 +280,7 @@ func (ss *ServerSet) PrintTo(w io.Writer) {
 
 func (ss *ServerSet) forEach(f func(*Client) error) error {
 	for _, info := range ss.Data {
-		srv, err := info.start(ss.ClientConfig(info), ss.Logger)
+		srv, err := info.start(ss.ClientConfig(info))
 		if err != nil {
 			return err
 		}

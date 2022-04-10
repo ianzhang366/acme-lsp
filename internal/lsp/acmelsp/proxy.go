@@ -186,7 +186,7 @@ func ListenAndServeProxy(ctx context.Context, cfg *config.Config, ss *ServerSet,
 			return err
 		}
 
-		ss.Logger.Printf("proxy conn, local %v, remote: %v", conn.LocalAddr(), conn.RemoteAddr())
+		log.Printf("proxy conn, local %v, remote: %v", conn.LocalAddr(), conn.RemoteAddr())
 		acmlspStream := jsonrpc2.NewHeaderStream(conn, conn)
 		ctx, rpc, _ := proxy.NewServer(ctx, acmlspStream, &proxyServer{
 			ss: ss,
