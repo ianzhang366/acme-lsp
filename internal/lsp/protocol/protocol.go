@@ -7,6 +7,7 @@ package protocol
 import (
 	"context"
 	"encoding/json"
+	dlog "log"
 
 	"github.com/fhs/acme-lsp/internal/golang_org_x_tools/jsonrpc2"
 	"github.com/fhs/acme-lsp/internal/golang_org_x_tools/telemetry/log"
@@ -17,6 +18,7 @@ import (
 const (
 	// RequestCancelledError should be used when a request is cancelled early.
 	RequestCancelledError = -32800
+	MetadataEndpoint      = "o#/metadata"
 )
 
 type DocumentUri = string
@@ -26,11 +28,13 @@ type canceller struct{ jsonrpc2.EmptyHandler }
 type clientHandler struct {
 	canceller
 	client Client
+	Log    *dlog.Logger
 }
 
 type serverHandler struct {
 	canceller
 	server Server
+	Logger *dlog.Logger
 }
 
 func (canceller) Request(ctx context.Context, conn *jsonrpc2.Conn, direction jsonrpc2.Direction, r *jsonrpc2.WireRequest) context.Context {
@@ -56,18 +60,19 @@ func (canceller) Cancel(ctx context.Context, conn *jsonrpc2.Conn, id jsonrpc2.ID
 	return true
 }
 
-func NewClient(ctx context.Context, stream jsonrpc2.Stream, client Client) (context.Context, *jsonrpc2.Conn, Server) {
+func NewClient(ctx context.Context, stream jsonrpc2.Stream, client Client, logger *dlog.Logger) (context.Context, *jsonrpc2.Conn, Server) {
 	ctx = WithClient(ctx, client)
-	conn := jsonrpc2.NewConn(stream)
-	conn.AddHandler(&clientHandler{client: client})
-	return ctx, conn, &serverDispatcher{Conn: conn}
+	conn := jsonrpc2.NewConn(stream, logger)
+	conn.AddHandler(&clientHandler{client: client, Log: logger})
+	return ctx, conn, &serverDispatcher{Conn: conn, Logger: logger}
 }
 
-func NewServer(ctx context.Context, stream jsonrpc2.Stream, server Server) (context.Context, *jsonrpc2.Conn, Client) {
-	conn := jsonrpc2.NewConn(stream)
-	client := &clientDispatcher{Conn: conn}
+func NewServer(ctx context.Context, stream jsonrpc2.Stream, server Server, logger *dlog.Logger) (context.Context, *jsonrpc2.Conn, Client) {
+	logger.Print("protocol.go NewServer")
+	conn := jsonrpc2.NewConn(stream, logger)
+	client := &clientDispatcher{Conn: conn, Log: logger}
 	ctx = WithClient(ctx, client)
-	conn.AddHandler(&serverHandler{server: server})
+	conn.AddHandler(&serverHandler{server: server, Logger: logger})
 	return ctx, conn, client
 }
 

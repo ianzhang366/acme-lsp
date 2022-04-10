@@ -5,6 +5,7 @@ package protocol
 import (
 	"context"
 	"encoding/json"
+	dlog "log"
 
 	"github.com/fhs/acme-lsp/internal/golang_org_x_tools/jsonrpc2"
 	"github.com/fhs/acme-lsp/internal/golang_org_x_tools/telemetry/log"
@@ -147,6 +148,7 @@ func (h clientHandler) Deliver(ctx context.Context, r *jsonrpc2.Request, deliver
 
 type clientDispatcher struct {
 	*jsonrpc2.Conn
+	Log *dlog.Logger
 }
 
 func (s *clientDispatcher) ShowMessage(ctx context.Context, params *ShowMessageParams) error {

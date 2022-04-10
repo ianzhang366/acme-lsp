@@ -1,11 +1,9 @@
 package protocol
 
-// Code generated (see typescript/README.md) DO NOT EDIT.
-
 import (
 	"context"
 	"encoding/json"
-
+	dlog "log"
 
 	"github.com/fhs/acme-lsp/internal/golang_org_x_tools/jsonrpc2"
 	"github.com/fhs/acme-lsp/internal/golang_org_x_tools/telemetry/log"
@@ -56,6 +54,7 @@ type Server interface {
 	Rename(context.Context, *RenameParams) (*WorkspaceEdit, error)
 	PrepareRename(context.Context, *PrepareRenameParams) (*Range, error)
 	ExecuteCommand(context.Context, *ExecuteCommandParams) (interface{}, error)
+	Metadata(context.Context, *MetadataParams) (*MetaSource, error)
 }
 
 func (h serverHandler) Deliver(ctx context.Context, r *jsonrpc2.Request, delivered bool) bool {
@@ -522,7 +521,19 @@ func (h serverHandler) Deliver(ctx context.Context, r *jsonrpc2.Request, deliver
 			log.Error(ctx, "", err)
 		}
 		return true
+	case MetadataEndpoint: // req csharp/metadata
+		var params MetadataParams
+		if err := json.Unmarshal(*r.Params, &params); err != nil {
+			sendParseError(ctx, r, err)
+			return true
+		}
 
+		h.Logger.Print("izhang tsserver.go csharp/metadata")
+		resp, err := h.server.Metadata(ctx, &params)
+		if err := r.Reply(ctx, resp, err); err != nil {
+			log.Error(ctx, "", err)
+		}
+		return true
 	default:
 		return false
 	}
@@ -530,6 +541,7 @@ func (h serverHandler) Deliver(ctx context.Context, r *jsonrpc2.Request, deliver
 
 type serverDispatcher struct {
 	*jsonrpc2.Conn
+	Logger *dlog.Logger
 }
 
 func (s *serverDispatcher) DidChangeWorkspaceFolders(ctx context.Context, params *DidChangeWorkspaceFoldersParams) error {
@@ -665,7 +677,6 @@ func (s *serverDispatcher) Completion(ctx context.Context, params *CompletionPar
 	var items compList
 	// var items []CompletionItem
 
-
 	if err := s.Conn.Call(ctx, "textDocument/completion", params, &items); err != nil {
 		return nil, err
 	}
@@ -702,10 +713,24 @@ func (s *serverDispatcher) SignatureHelp(ctx context.Context, params *SignatureH
 
 func (s *serverDispatcher) Definition(ctx context.Context, params *DefinitionParams) ([]Location, error) {
 	var result Locations
+
+	s.Logger.Print("serverDispatcher textDocument/definition")
 	if err := s.Conn.Call(ctx, "textDocument/definition", params, &result); err != nil {
 		return nil, err
 	}
+
 	return result, nil
+}
+
+func (s *serverDispatcher) Metadata(ctx context.Context, params *MetadataParams) (*MetaSource, error) {
+	var result MetaSource
+	s.Logger.Print("serverDispatcher csharp/metadata")
+	if err := s.Conn.Call(ctx, MetadataEndpoint, params, &result); err != nil {
+		s.Logger.Printf("/protocol/tsserver.go csharp/metadata params: %v. result: %v, err: %v", params, result, err)
+		return nil, err
+	}
+
+	return &result, nil
 }
 
 func (s *serverDispatcher) References(ctx context.Context, params *ReferenceParams) ([]Location, error) {
