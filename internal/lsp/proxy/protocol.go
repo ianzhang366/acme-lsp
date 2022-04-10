@@ -22,13 +22,11 @@ type canceller struct{ jsonrpc2.EmptyHandler }
 type clientHandler struct {
 	canceller
 	client Client
-	Log    *dlog.Logger
 }
 
 type serverHandler struct {
 	canceller
 	server Server
-	Log    *dlog.Logger
 }
 
 func (canceller) Cancel(ctx context.Context, conn *jsonrpc2.Conn, id jsonrpc2.ID, cancelled bool) bool {
@@ -46,8 +44,8 @@ func NewClient(ctx context.Context, stream jsonrpc2.Stream, client Client, log *
 	c := &lspClientDispatcher{
 		Client: client,
 	}
-	ctx, conn, server := protocol.NewClient(ctx, stream, c, log)
-	conn.AddHandler(&clientHandler{client: client, Log: log})
+	ctx, conn, server := protocol.NewClient(ctx, stream, c)
+	conn.AddHandler(&clientHandler{client: client})
 	s := &serverDispatcher{
 		Conn:   conn,
 		Server: server,
@@ -56,16 +54,15 @@ func NewClient(ctx context.Context, stream jsonrpc2.Stream, client Client, log *
 	return ctx, conn, s
 }
 
-func NewServer(ctx context.Context, stream jsonrpc2.Stream, server Server, log *dlog.Logger) (context.Context, *jsonrpc2.Conn, Client) {
+func NewServer(ctx context.Context, stream jsonrpc2.Stream, server Server) (context.Context, *jsonrpc2.Conn, Client) {
 	s := &lspServerDispatcher{
 		Server: server,
 	}
-	ctx, conn, client := protocol.NewServer(ctx, stream, s, log)
-	conn.AddHandler(&serverHandler{server: server, Log: log})
+	ctx, conn, client := protocol.NewServer(ctx, stream, s)
+	conn.AddHandler(&serverHandler{server: server})
 	c := &clientDispatcher{
 		Conn:   conn,
 		Client: client,
-		Log:    log,
 	}
 	return ctx, conn, c
 }

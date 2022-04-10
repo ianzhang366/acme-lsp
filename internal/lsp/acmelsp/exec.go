@@ -99,7 +99,7 @@ func execServer(cs *config.Server, cfg *ClientConfig, logger *log.Logger) (*Serv
 		}
 	}()
 
-	srv.Client, err = NewClient(p1, cfg, logger)
+	srv.Client, err = NewClient(p1, cfg)
 	if err != nil {
 		cmd.Process.Kill()
 		return nil, fmt.Errorf("failed to connect to language server %q: %v", args, err)
@@ -112,7 +112,7 @@ func dialServer(cs *config.Server, cfg *ClientConfig, logger *log.Logger) (*Serv
 	if err != nil {
 		return nil, err
 	}
-	c, err := NewClient(conn, cfg, logger)
+	c, err := NewClient(conn, cfg)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to language server at %v: %v", cs.Address, err)
 	}
