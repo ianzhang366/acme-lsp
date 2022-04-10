@@ -6,7 +6,6 @@ package proxy
 
 import (
 	"context"
-	dlog "log"
 
 	"github.com/fhs/acme-lsp/internal/golang_org_x_tools/jsonrpc2"
 	"github.com/fhs/acme-lsp/internal/golang_org_x_tools/telemetry/log"
@@ -40,7 +39,7 @@ func (canceller) Cancel(ctx context.Context, conn *jsonrpc2.Conn, id jsonrpc2.ID
 	return true
 }
 
-func NewClient(ctx context.Context, stream jsonrpc2.Stream, client Client, log *dlog.Logger) (context.Context, *jsonrpc2.Conn, Server) {
+func NewClient(ctx context.Context, stream jsonrpc2.Stream, client Client) (context.Context, *jsonrpc2.Conn, Server) {
 	c := &lspClientDispatcher{
 		Client: client,
 	}
@@ -49,7 +48,6 @@ func NewClient(ctx context.Context, stream jsonrpc2.Stream, client Client, log *
 	s := &serverDispatcher{
 		Conn:   conn,
 		Server: server,
-		Log:    log,
 	}
 	return ctx, conn, s
 }

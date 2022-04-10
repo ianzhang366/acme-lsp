@@ -125,7 +125,6 @@ func (h serverHandler) Deliver(ctx context.Context, r *jsonrpc2.Request, deliver
 type serverDispatcher struct {
 	*jsonrpc2.Conn
 	protocol.Server
-	Log *log.Logger
 }
 
 func (s *serverDispatcher) Version(ctx context.Context) (int, error) {

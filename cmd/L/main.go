@@ -141,7 +141,7 @@ func run(cfg *config.Config, args []string) error {
 	}()
 
 	stream := jsonrpc2.NewHeaderStream(conn, conn)
-	ctx, rpc, server := proxy.NewClient(ctx, stream, nil, logger)
+	ctx, rpc, server := proxy.NewClient(ctx, stream, nil)
 	go rpc.Run(ctx)
 
 	logger.Print("started JSONN RPC")
