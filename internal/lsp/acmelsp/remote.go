@@ -126,8 +126,6 @@ func (rc *RemoteCmd) Definition(ctx context.Context, print bool) error {
 		return fmt.Errorf("bad server response: %v", err)
 	}
 
-	log.Printf("definition, location0: %v", locations[0].URI)
-
 	sufix := ".cs"
 	uri := pos.TextDocument.URI
 
