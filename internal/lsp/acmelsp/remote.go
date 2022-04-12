@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"strings"
 
@@ -131,8 +130,6 @@ func (rc *RemoteCmd) Definition(ctx context.Context, print bool) error {
 
 	if strings.HasSuffix(uri, sufix) {
 		for i, loc := range locations {
-			log.Printf("defintion checking location: %#v", loc)
-
 			if !strings.HasPrefix(loc.URI, "file:///%24metadata%24") {
 				continue
 			}

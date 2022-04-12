@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -70,7 +69,6 @@ func (rc *RemoteCmd) localizeMetadata(ctx context.Context, uri string) (string, 
 	}
 
 	path := convertFilePath(key)
-	log.Printf("key: %v,  filePath: %v", key, path)
 
 	if err := os.MkdirAll(filepath.Dir(path), 0770); err != nil {
 		return "", fmt.Errorf("failed to create dir %s for metatdata of uri: %s to disk, with err: %v", filepath.Dir(path), uri, err)

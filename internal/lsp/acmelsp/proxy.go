@@ -59,8 +59,7 @@ func (s *proxyServer) Definition(ctx context.Context, params *protocol.Definitio
 	if err != nil {
 		return nil, fmt.Errorf("Definition: %v", err)
 	}
-	conn := srv.Conn()
-	log.Printf("call to lsp server: %v Call Definition, Conn, local: %v, remote: %v", srv.Name, conn.LocalAddr(), conn.RemoteAddr())
+
 	return srv.Client.Definition(ctx, params)
 }
 
