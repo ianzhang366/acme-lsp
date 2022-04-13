@@ -21,16 +21,24 @@ type RemoteCmd struct {
 	Stdout io.Writer
 	Stderr io.Writer
 
-	metadataSet map[string]string
+	metadataSet  map[string]string
+	bookmarkFile string
 }
 
 func NewRemoteCmd(server proxy.Server, winid int) *RemoteCmd {
+	h, _ := os.UserHomeDir()
+	bSuffix := ".bookmark.json"
+
+	fullBookFile := fmt.Sprintf("%s/%s", h, bSuffix)
+	createBookmarkFile(fullBookFile)
+
 	r := &RemoteCmd{
-		server:      server,
-		winid:       winid,
-		Stdout:      os.Stdout,
-		Stderr:      os.Stderr,
-		metadataSet: map[string]string{},
+		server:       server,
+		winid:        winid,
+		Stdout:       os.Stdout,
+		Stderr:       os.Stderr,
+		metadataSet:  map[string]string{},
+		bookmarkFile: fullBookFile,
 	}
 
 	return r

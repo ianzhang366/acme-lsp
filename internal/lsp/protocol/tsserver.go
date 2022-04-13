@@ -53,7 +53,6 @@ type Server interface {
 	Rename(context.Context, *RenameParams) (*WorkspaceEdit, error)
 	PrepareRename(context.Context, *PrepareRenameParams) (*Range, error)
 	ExecuteCommand(context.Context, *ExecuteCommandParams) (interface{}, error)
-	Metadata(context.Context, *MetadataParams) (*MetaSourceRsponse, error)
 }
 
 func (h serverHandler) Deliver(ctx context.Context, r *jsonrpc2.Request, delivered bool) bool {

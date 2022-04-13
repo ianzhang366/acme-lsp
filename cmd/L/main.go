@@ -216,15 +216,17 @@ func run(cfg *config.Config, args []string) error {
 		return rc.Completion(ctx, len(args) > 0 && args[0] == "-e")
 	case "def":
 		args = args[1:]
-
+		rc.AddBookmark()
 		return rc.Definition(ctx, len(args) > 0 && args[0] == "-p")
 	case "fmt":
 		return rc.OrganizeImportsAndFormat(ctx)
 	case "hov":
 		return rc.Hover(ctx)
 	case "impls":
+		rc.AddBookmark()
 		return rc.Implementation(ctx, true)
 	case "refs":
+		rc.AddBookmark()
 		return rc.References(ctx)
 	case "rn":
 		args = args[1:]
@@ -238,7 +240,10 @@ func run(cfg *config.Config, args []string) error {
 		return rc.DocumentSymbol(ctx)
 	case "type":
 		args = args[1:]
+		rc.AddBookmark()
 		return rc.TypeDefinition(ctx, len(args) > 0 && args[0] == "-p")
+	case "bk":
+		return rc.Back()
 	}
 	return fmt.Errorf("unknown command %q", args[0])
 }
