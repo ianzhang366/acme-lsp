@@ -93,6 +93,9 @@ func NewApplication(ctx context.Context, cfg *config.Config, args []string) (*Ap
 	if err != nil {
 		return nil, fmt.Errorf("failed to create file manager: %v", err)
 	}
+
+	acmelsp.CreateBookmarkFile()
+
 	return &Application{
 		cfg: cfg,
 		ss:  ss,

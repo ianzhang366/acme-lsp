@@ -48,7 +48,6 @@ type subLspServer interface {
 	SignatureHelp(context.Context, *protocol.SignatureHelpParams) (*protocol.SignatureHelp, error)
 	DocumentSymbol(context.Context, *protocol.DocumentSymbolParams) ([]protocol.DocumentSymbol, error)
 	TypeDefinition(context.Context, *protocol.TypeDefinitionParams) ([]protocol.Location, error)
-	Metadata(context.Context, *protocol.MetadataParams) (*protocol.MetaSourceRsponse, error)
 }
 
 type ExtendServer interface {

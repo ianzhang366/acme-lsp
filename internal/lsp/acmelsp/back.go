@@ -11,17 +11,38 @@ import (
 	"github.com/fhs/acme-lsp/internal/lsp/protocol"
 )
 
-func createBookmarkFile(bFile string) {
-	f, err := os.OpenFile(bFile, os.O_RDWR|os.O_CREATE, 0666)
+func getBookmarkFilepath() (string, error) {
+	h, err := os.UserHomeDir()
+	if err != nil {
+		return h, err
+	}
+
+	bSuffix := ".bookmark.json"
+
+	return fmt.Sprintf("%s/%s", h, bSuffix), nil
+}
+
+func CreateBookmarkFile() {
+	bFile, err := getBookmarkFilepath()
+	if err != nil {
+		log.Printf("failed to generate bookmark filepath, err: %v", err)
+		return
+	}
+
+	f, err := os.OpenFile(bFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+
 	if err != nil {
 		log.Printf("failed to create bookmark file, err: %v", err)
 	}
-	f.Close()
-
+	defer f.Close()
 	return
 }
 
 func (rc *RemoteCmd) AddBookmark() {
+	if rc.bookmarkFile == "" {
+		return
+	}
+
 	pos, _, err := rc.getPosition()
 	if err != nil {
 		log.Print("failed to get position for adding bookmark")
@@ -32,7 +53,6 @@ func (rc *RemoteCmd) AddBookmark() {
 		log.Print("failed read bookmarks")
 	}
 
-	log.Printf("AddBookmark before %v", string(p))
 	prev := []*protocol.TextDocumentPositionParams{}
 
 	if len(p) != 0 {
@@ -50,7 +70,6 @@ func (rc *RemoteCmd) AddBookmark() {
 		return
 	}
 
-	log.Printf("AddBookmark prev %v", prev)
 	if err = ioutil.WriteFile(rc.bookmarkFile, d, fs.FileMode(os.O_TRUNC)); err != nil {
 		log.Print("failed write bookmarks to disk")
 	}
@@ -70,8 +89,6 @@ func (rc *RemoteCmd) PopBookmark() (*protocol.TextDocumentPositionParams, error)
 		return out, nil
 	}
 
-	log.Printf("PopBookmark prev {%v} from %v", string(p), rc.bookmarkFile)
-
 	if err := json.Unmarshal(p, &prev); err != nil {
 		return out, fmt.Errorf("failed to unmarshal previous bookmarks, err: %v", err)
 	}
@@ -82,7 +99,6 @@ func (rc *RemoteCmd) PopBookmark() (*protocol.TextDocumentPositionParams, error)
 
 	d := []byte{}
 
-	log.Printf("PopBookmark prev %v", prev)
 	if len(prev) != 0 {
 		d, err = json.Marshal(prev)
 		if err != nil {
@@ -107,6 +123,10 @@ func (rc *RemoteCmd) PlumbBookmark(pos *protocol.TextDocumentPositionParams) err
 }
 
 func (rc *RemoteCmd) Back() error {
+	if rc.bookmarkFile == "" {
+		return fmt.Errorf("failed to pop bookmark, err: bookmark file path doesn't exist")
+	}
+
 	pos, err := rc.PopBookmark()
 	if err != nil {
 		return fmt.Errorf("failed to pop bookmark %w", err)

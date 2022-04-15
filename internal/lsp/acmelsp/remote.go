@@ -26,11 +26,10 @@ type RemoteCmd struct {
 }
 
 func NewRemoteCmd(server proxy.Server, winid int) *RemoteCmd {
-	h, _ := os.UserHomeDir()
-	bSuffix := ".bookmark.json"
-
-	fullBookFile := fmt.Sprintf("%s/%s", h, bSuffix)
-	createBookmarkFile(fullBookFile)
+	fullBookFile, err := getBookmarkFilepath()
+	if err != nil {
+		fullBookFile = ""
+	}
 
 	r := &RemoteCmd{
 		server:       server,
